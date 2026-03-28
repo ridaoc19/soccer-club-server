@@ -1,0 +1,29 @@
+{
+  // ─── Formateo ──────────────────────────────────────────────────────────────
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // ─── ESLint ────────────────────────────────────────────────────────────────
+  "eslint.validate": ["javascript", "typescript"],
+
+  // ─── TypeScript / Node.js ──────────────────────────────────────────────────
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // ─── Editor para el Backend ────────────────────────────────────────────────
+  "editor.tabSize": 2,
+  "editor.rulers": [120],
+  "editor.wordWrap": "off",
+  "files.eol": "\r\n",
+
+  // ─── Database ──────────────────────────────────────────────────────────────
+  // Configuración opcional para VSCode-Postgres si el equipo lo usa
+  "vscode-postgres.host": "localhost",
+  "vscode-postgres.port": 5432,
+  "vscode-postgres.user": "postgres",
+  "vscode-postgres.database": "soccer"
+}

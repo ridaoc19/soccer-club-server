@@ -1,0 +1,35 @@
+{
+  "recommendations": [
+    // ── Linting & Formateo ──────────────────────────────────────────────────
+    // ESLint: muestra errores de TypeScript en tiempo real en el editor
+    // (usa la config de eslint.config.mjs)
+    "dbaeumer.vscode-eslint",
+    // Prettier: formatea al guardar TS, JSON, HTML automáticamente
+    // (usa la config de .prettierrc)
+    "esbenp.prettier-vscode",
+
+    // ── TypeScript & Node.js ────────────────────────────────────────────────
+    // Mejora los errores de TypeScript en el editor con mensajes más claros
+    "yoavbls.pretty-ts-errors",
+    // Autocompletado de imports de rutas relativas y módulos de Node
+    "christian-kohler.path-intellisense",
+    // Muestra el costo en bytes de cada import
+    "wix.vscode-import-cost",
+
+    // ── Base de Datos ────────────────────────────────────────────────────────
+    // Visualiza y maneja tu base de datos PostgreSQL directamente en VS Code
+    "ckolkman.vscode-postgres",
+
+    // ── Git ──────────────────────────────────────────────────────────────────
+    // GitLens: ver el historial de cada línea directamente en el código
+    "eamodio.gitlens",
+
+    // ── DX / Productividad ───────────────────────────────────────────────────
+    // Resalta los pares de paréntesis/corchetes con colores
+    "CoenraadS.bracket-pair-colorizer-2",
+    // Resalta TODO, FIXME, NOTE en comentarios
+    "gruntfuggly.todo-tree",
+    // Muestra el tamaño del archivo actual en la barra de estado
+    "mkxml.vscode-filesize"
+  ]
+}
