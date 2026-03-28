@@ -1,14 +1,32 @@
 {
-   "compilerOptions": {
-      "lib": [
-         "es2021"
-      ],
-      "target": "es2021",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "outDir": "./build",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "sourceMap": true
-   }
+  "compilerOptions": {
+    /* --- Configuración de Compilación --- */
+    "target": "es2021", // Genera JS moderno.
+    "module": "node16", // Estándar de módulos para Node moderno.
+    "rootDir": "./src", // Dónde está tu código.
+    "outDir": "./build", // Dónde se guarda el código listo.
+
+    /* --- MODO ESTRICTO Y CALIDAD (Lo más importante) --- */
+    "strict": true, // Base de seguridad (no permite 'any' ni nulos sin control).
+    "noImplicitReturns": true, // OBLIGA a que toda función devuelva algo en todos sus caminos (if/else).
+    "noUnusedLocals": true, // ERROR si tienes variables declaradas que no usas (mantiene el código limpio).
+    "noUnusedParameters": true, // ERROR si una función recibe parámetros que no utiliza.
+    "noFallthroughCasesInSwitch": true, // EVITA errores olvidando el 'break' en los switch/case.
+    "noImplicitOverride": true, // Te avisa si estás sobrescribiendo un método de una clase padre sin querer.
+    "noPropertyAccessFromIndexSignature": false, // Evita acceder a propiedades inexistentes usando ["key"].
+
+    /* --- Requisitos para TypeORM --- */
+    "emitDecoratorMetadata": true, // PERMITE a TypeORM saber el tipo de tus columnas en la BD.
+    "experimentalDecorators": true, // HABILITA el uso de @Entity, @Column, @PrimaryGeneratedColumn.
+
+    /* --- Compatibilidad y Desarrollo --- */
+    "esModuleInterop": true, // Permite importar Express/Cors de forma sencilla.
+    "skipLibCheck": true, // Ahorra tiempo no revisando errores dentro de 'node_modules'.
+    "sourceMap": true, // PERMITE debuggear viendo tu código .ts original en la consola.
+    "incremental": true, // Recompila solo lo que cambias (hace que Nodemon vuele).
+    "forceConsistentCasingInFileNames": true, // Evita errores de mayúsculas/minúsculas entre Windows y Linux.
+    "removeComments": true // Limpia el código final de comentarios para producción.
+  },
+  "include": ["src/**/*"], // Compila todo lo que esté en la carpeta src.
+  "exclude": ["node_modules"] // Ignora la carpeta de librerías.
 }

@@ -1,20 +1,34 @@
-import { AppDataSource } from "./data-source"
-import { User } from "./entity/User"
+import './dotenv';
+import express from 'express';
+import cors from 'cors';
+import { AppDataSource } from './data-source';
 
-AppDataSource.initialize().then(async () => {
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-    console.log("Inserting a new user into the database...")
-    const user = new User()
-    user.firstName = "Timber"
-    user.lastName = "Saw"
-    user.age = 25
-    await AppDataSource.manager.save(user)
-    console.log("Saved a new user with id: " + user.id)
+const PORT = process.env.PORT || 3000;
 
-    console.log("Loading users from the database...")
-    const users = await AppDataSource.manager.find(User)
-    console.log("Loaded users: ", users)
+AppDataSource.initialize()
+  .then(() => {
+    console.log('Conexión a la base de datos establecida.');
 
-    console.log("Here you can setup and run express / fastify / any other framework.")
-
-}).catch(error => console.log(error))
+    app.listen(PORT, () => {
+      console.log(`El servidor está ejecutándose en el puerto ${PORT}`);
+    });
+  })
+  .catch((err: Error) => {
+    console.error(
+      'Error al conectarse a la base de datos. Asegúrate de que PostgreSQL se esté ejecutando en el puerto configurado y de que la base de datos exista.. Error:',
+      err?.message ?? err,
+    );
+    console.log('\n-------------------------------------------');
+    // Iniciar el servidor sin base de datos para la vista previa del frontend en caso de que la base de datos falle localmente
+    console.log(
+      'Iniciar el servidor sin base de datos solo para permitir que las API front-end respondan (stub en memoria).',
+    );
+    console.log('\n-------------------------------------------');
+    app.listen(PORT, () => {
+      console.log(`Servidor de respaldo ejecutándose en el puerto ${PORT}`);
+    });
+  });
