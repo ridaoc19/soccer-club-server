@@ -1,9 +1,17 @@
-import { Router } from 'express';
+import { Request, Response } from 'express';
+import { CreateUserUseCase } from '../application/create-user.usecase';
 
-const router = Router();
+export class UsersController {
+  constructor(private createUser: CreateUserUseCase) {}
 
-router.get('/', (_, res) => {
-  res.send('user');
-});
+  create = async (req: Request, res: Response): Promise<void> => {
+    const user = await this.createUser.execute(req.body as { email: string });
+    res.json(user);
+  };
 
-export { router };
+  getAll = async (_req: Request, res: Response): Promise<void> => {
+    const users = await this.createUser.usersRepo.findAll();
+    // const users = await this.createUser['usersRepo'].findAll();
+    res.json(users);
+  };
+}

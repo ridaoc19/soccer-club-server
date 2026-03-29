@@ -85,11 +85,174 @@ Este servidor utiliza **PostgreSQL**. Las entidades se encuentran en `src/entity
 
 ```
 src/
-├── entity/          # Modelos de TypeORM (tablas de la DB)
-├── migration/       # Migraciones de base de datos
-├── data-source.ts   # Configuración de conexión con la DB
-├── dotenv.ts        # Cargador centralizado de variables de entorno
-└── index.ts         # Punto de entrada de la aplicación
+
+├── app/
+│   ├── app.ts
+│   ├── server.ts
+│   ├── routes.ts
+│   └── container.ts
+│
+├── config/
+│   ├── database.ts
+│   ├── env.ts
+│   ├── jwt.ts
+│   └── logger.ts
+│
+├── core/
+│   ├── base/
+│   │   ├── base.controller.ts
+│   │   ├── base.service.ts
+│   │   ├── base.repository.ts
+│   │   └── router.factory.ts
+│   │
+│   ├── middleware/
+│   │   ├── auth.middleware.ts
+│   │   ├── role.middleware.ts
+│   │   ├── upload.middleware.ts
+│   │   └── validation.middleware.ts
+│   │
+│   ├── utils/
+│   │   ├── pagination.ts
+│   │   ├── filters.ts
+│   │   └── response.ts
+│
+├── modules/
+│
+│   ├── users/                  🔐 Usuario & Seguridad
+│   │   ├── domain/
+│   │   │   ├── user.entity.ts
+│   │   │   ├── role.entity.ts
+│   │   │   ├── notification.entity.ts
+│   │   │   └── user-role.entity.ts
+│   │   │
+│   │   ├── application/
+│   │   │   ├── create-user.usecase.ts
+│   │   │   ├── login.usecase.ts
+│   │   │   ├── assign-role.usecase.ts
+│   │   │   └── get-user-profile.usecase.ts
+│   │   │
+│   │   ├── infrastructure/
+│   │   │   ├── users.repository.ts
+│   │   │   ├── users.controller.ts
+│   │   │   ├── users.routes.ts
+│   │   │   └── users.mapper.ts
+│   │   │
+│   │   └── users.module.ts
+│
+│   ├── club/                   ⚽ Estructura Club
+│   │   ├── domain/
+│   │   │   ├── club.entity.ts
+│   │   │   ├── team.entity.ts
+│   │   │   ├── player.entity.ts
+│   │   │   ├── coach.entity.ts
+│   │   │   └── player-team.entity.ts
+│   │   │
+│   │   ├── application/
+│   │   │   ├── create-club.usecase.ts
+│   │   │   ├── create-team.usecase.ts
+│   │   │   ├── add-player-to-team.usecase.ts
+│   │   │   ├── assign-coach.usecase.ts
+│   │   │   └── get-club-structure.usecase.ts
+│   │   │
+│   │   ├── infrastructure/
+│   │   │   ├── club.repository.ts
+│   │   │   ├── club.controller.ts
+│   │   │   ├── club.routes.ts
+│   │   │   └── club.mapper.ts
+│   │   │
+│   │   └── club.module.ts
+│
+│   ├── competitions/           🏆 Competición
+│   │   ├── domain/
+│   │   │   ├── league.entity.ts
+│   │   │   ├── season.entity.ts
+│   │   │   ├── match.entity.ts
+│   │   │   ├── standings.entity.ts
+│   │   │   ├── statistics.entity.ts
+│   │   │   └── match-player.entity.ts
+│   │   │
+│   │   ├── application/
+│   │   │   ├── create-league.usecase.ts
+│   │   │   ├── create-season.usecase.ts
+│   │   │   ├── create-match.usecase.ts
+│   │   │   ├── update-standings.usecase.ts
+│   │   │   └── get-season-table.usecase.ts
+│   │   │
+│   │   ├── infrastructure/
+│   │   │   ├── competitions.repository.ts
+│   │   │   ├── competitions.controller.ts
+│   │   │   ├── competitions.routes.ts
+│   │   │   └── competitions.mapper.ts
+│   │   │
+│   │   └── competitions.module.ts
+│
+│   ├── content/                🗞️ Noticias y contenido
+│   │   ├── domain/
+│   │   │   ├── news.entity.ts
+│   │   │   ├── comment.entity.ts
+│   │   │   ├── image.entity.ts
+│   │   │   └── news-image.entity.ts
+│   │   │
+│   │   ├── application/
+│   │   │   ├── create-news.usecase.ts
+│   │   │   ├── add-comment.usecase.ts
+│   │   │   ├── upload-image.usecase.ts
+│   │   │   └── get-news-detail.usecase.ts
+│   │   │
+│   │   ├── infrastructure/
+│   │   │   ├── content.repository.ts
+│   │   │   ├── content.controller.ts
+│   │   │   ├── content.routes.ts
+│   │   │   └── content.mapper.ts
+│   │   │
+│   │   └── content.module.ts
+│
+│   ├── sponsors/               🤝 Patrocinadores
+│   │   ├── domain/
+│   │   │   ├── sponsor.entity.ts
+│   │   │   ├── club-sponsor.entity.ts
+│   │   │   ├── team-sponsor.entity.ts
+│   │   │   └── contract.entity.ts
+│   │   │
+│   │   ├── application/
+│   │   │   ├── create-sponsor.usecase.ts
+│   │   │   ├── assign-sponsor-to-club.usecase.ts
+│   │   │   ├── assign-sponsor-to-team.usecase.ts
+│   │   │   └── get-sponsors.usecase.ts
+│   │   │
+│   │   ├── infrastructure/
+│   │   │   ├── sponsors.repository.ts
+│   │   │   ├── sponsors.controller.ts
+│   │   │   ├── sponsors.routes.ts
+│   │   │   └── sponsors.mapper.ts
+│   │   │
+│   │   └── sponsors.module.ts
+│
+│   ├── social/                 ❤️ Interacción social
+│   │   ├── domain/
+│   │   │   ├── like.entity.ts
+│   │   │   ├── favorite.entity.ts
+│   │   │   ├── report.entity.ts
+│   │   │   └── user-interaction.entity.ts
+│   │   │
+│   │   ├── application/
+│   │   │   ├── like-news.usecase.ts
+│   │   │   ├── add-favorite.usecase.ts
+│   │   │   ├── report-content.usecase.ts
+│   │   │   └── get-user-interactions.usecase.ts
+│   │   │
+│   │   ├── infrastructure/
+│   │   │   ├── social.repository.ts
+│   │   │   ├── social.controller.ts
+│   │   │   ├── social.routes.ts
+│   │   │   └── social.mapper.ts
+│   │   │
+│   │   └── social.module.ts
+│
+└── database/
+    ├── migrations/
+    ├── seeds/
+    └── data-source.ts
 ```
 
 ---

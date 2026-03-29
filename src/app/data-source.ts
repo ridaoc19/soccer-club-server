@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'soccerclub',
   synchronize: true,
   logging: false,
-  entities: [],
+  entities: ['src/modules/**/domain/*.entity.ts'],
   subscribers: [],
   migrations: [],
 });

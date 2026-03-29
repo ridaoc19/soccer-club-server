@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
-interface ControllerModule {
+interface RoutesModule {
   router: Router;
 }
 
@@ -11,9 +11,9 @@ const router = Router();
 const ext = __filename.endsWith('.ts') ? '.ts' : '.js';
 
 readdirSync(join(__dirname, '..', '/modules')).map((fileName) => {
-  if (existsSync(join(__dirname, '..', 'modules', fileName, 'infrastructure', `${fileName}.controller${ext}`))) {
-    import(`../modules/${fileName}/infrastructure/${fileName}.controller${ext}`)
-      .then((moduleRouter: ControllerModule) => {
+  if (existsSync(join(__dirname, '..', 'modules', fileName, 'infrastructure', `${fileName}.routes${ext}`))) {
+    import(`../modules/${fileName}/infrastructure/${fileName}.routes${ext}`)
+      .then((moduleRouter: RoutesModule) => {
         router.use(`/${fileName}`, moduleRouter.router);
       })
       .catch((error) => {
