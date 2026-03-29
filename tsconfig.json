@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     /* --- Configuración de Compilación --- */
-    "target": "es2021", // Genera JS moderno.
-    "module": "node16", // Estándar de módulos para Node moderno.
+    "target": "es2022", // Genera JS moderno.
+    "module": "commonjs", // Estándar de módulos para Node moderno.
     "rootDir": "./src", // Dónde está tu código.
     "outDir": "./build", // Dónde se guarda el código listo.
 
