@@ -38,6 +38,7 @@ export default defineConfig([
       '@typescript-eslint/no-namespace': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/dot-notation': 'off',
       '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info', 'log'] }],
     },
