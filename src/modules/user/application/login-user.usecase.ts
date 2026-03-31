@@ -1,18 +1,46 @@
+import { AppResponse } from '../../../core/base/http-response';
 import { User } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/user.repository';
+import { PasswordUtils } from '../../../core/utils/password.utils';
+import { JwtUtils } from '../../../core/utils/jwt.utils';
+
+export interface ILoginResponse {
+  user: Omit<User, 'password'>;
+  token: string;
+  message: string;
+}
 
 export class LoginUserUseCase {
   constructor(private usersRepo: UsersRepository) {}
 
-  async execute(email: string, password: string): Promise<User> {
+  async execute(email: string, password: string): Promise<ILoginResponse> {
     const user = await this.usersRepo.findByEmail(email);
 
-    if (!user) throw new Error('No se ha encontrado al usuario');
-
-    if (user.password !== password) {
-      throw new Error('Contraseña incorrecta');
+    if (!user) {
+      throw new AppResponse('El usuario no existe', 404);
     }
 
-    return user;
+    // Comparar contraseñas
+    const isPasswordValid = await PasswordUtils.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw AppResponse.unauthorized('Contraseña incorrecta');
+    }
+
+    // Generar token JWT real
+    const token = JwtUtils.sign({
+      id: String(user.id),
+      email: user.email,
+    });
+
+    // Omitir la contraseña de la respuesta
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+
+    return {
+      user: userWithoutPassword,
+      token,
+      message: 'Login exitoso',
+    };
   }
 }

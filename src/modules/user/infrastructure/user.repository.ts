@@ -24,6 +24,11 @@ export class UsersRepository {
     return this.repo.save(data);
   }
 
+  async update(id: number, data: Partial<User>): Promise<User | null> {
+    await this.repo.update(id, data);
+    return this.findById(id);
+  }
+
   delete(id: number): Promise<DeleteResult> {
     return this.repo.delete(id);
   }
