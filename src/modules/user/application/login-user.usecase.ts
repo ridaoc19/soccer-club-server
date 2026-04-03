@@ -5,8 +5,7 @@ import { PasswordUtils } from '../../../core/utils/password.utils';
 import { JwtUtils } from '../../../core/utils/jwt.utils';
 
 export interface ILoginResponse {
-  user: Omit<User, 'password'>;
-  token: string;
+  user: Omit<User, 'password'> & { token: string };
   message: string;
 }
 
@@ -34,13 +33,11 @@ export class LoginUserUseCase {
     });
 
     // Omitir la contraseña de la respuesta
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _pass, ...userWithoutPassword } = user;
 
     return {
-      user: userWithoutPassword,
-      token,
-      message: 'Login exitoso',
+      user: { ...userWithoutPassword, token },
+      message: `${userWithoutPassword.name} inicio de sesión existoso`,
     };
   }
 }
