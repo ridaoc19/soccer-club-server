@@ -4,7 +4,7 @@ import { AuthRequest } from '../../../core/middleware/auth.middleware';
 import { ChangePasswordUseCase } from '../application/change-password.usecase';
 import { CreateUserUseCase } from '../application/create-user.usecase';
 import { DeleteUserUseCase } from '../application/delete-user.usecase';
-import { GetUserUseCase } from '../application/get-user.usecase';
+import { GetUserUseCase, IProfileResponse } from '../application/get-user.usecase';
 import { ILoginResponse, LoginUserUseCase } from '../application/login-user.usecase';
 import { UpdateUserUseCase } from '../application/update-user.usecase';
 import { ChangePasswordDto } from '../dto/change-password.dto';
@@ -37,10 +37,9 @@ export class UsersController {
 
   getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
     const userId = Number(req.user?.id ?? 0);
-    const user = await this.getUser.execute(userId);
+    const { user, message } = await this.getUser.execute(userId);
 
-    const { password: _, ...userWithoutPassword } = user;
-    AppResponse.ok(res, userWithoutPassword, 'Perfil obtenido');
+    AppResponse.ok<IProfileResponse['user']>(res, user, message);
   };
 
   update = async (req: AuthRequest, res: Response): Promise<void> => {
