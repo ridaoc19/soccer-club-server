@@ -15,6 +15,12 @@ const envVars = z.object({
   DB_PASSWORD: z.string(),
   DB_NAME: z.string(),
   JWT_SECRET: z.string(),
+  MAIL_HOST: z.string().default('smtp.gmail.com'),
+  MAIL_PORT: z.string().default('587'),
+  MAIL_USER: z.string(),
+  MAIL_PASS: z.string(),
+  MAIL_FROM: z.string().default('Soccer Club <no-reply@soccerclub.com>'),
+  CLIENT_URL: z.string().default('http://localhost:5173'),
 });
 
 envVars.parse(process.env);

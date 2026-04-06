@@ -8,13 +8,14 @@ import { GetUserUseCase } from '../application/get-user.usecase';
 import { UpdateUserUseCase } from '../application/update-user.usecase';
 import { ChangePasswordUseCase } from '../application/change-password.usecase';
 import { DeleteUserUseCase } from '../application/delete-user.usecase';
+import { ResetPasswordUseCase } from '../application/reset-password.usecase';
 import { UsersController } from './user.controller';
 import { validateDto } from '../../../core/middleware/validation.middleware';
 import { LoginDto } from '../dto/login-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { RequestResetPasswordDto } from '../dto/request-reset-password.dto';
 import { asyncHandler } from '../../../core/base/async-handler';
-
 import { authMiddleware } from '../../../core/middleware/auth.middleware';
 
 const router = Router();
@@ -26,8 +27,9 @@ const getUser = new GetUserUseCase(repo);
 const updateProfile = new UpdateUserUseCase(repo);
 const changePassword = new ChangePasswordUseCase(repo);
 const deleteUser = new DeleteUserUseCase(repo);
+const resetPassword = new ResetPasswordUseCase(repo);
 
-const controller = new UsersController(createUser, loginUser, getUser, updateProfile, changePassword, deleteUser);
+const controller = new UsersController(createUser, loginUser, getUser, updateProfile, changePassword, deleteUser, resetPassword);
 
 /**
  * @swagger
@@ -395,5 +397,33 @@ router.delete('/:id', authMiddleware, asyncHandler(controller.delete));
  *                         $ref: '#/components/schemas/UserResponse'
  */
 router.get('/', authMiddleware, asyncHandler(controller.getAll));
+
+/**
+ * @swagger
+ * /user/reset-password:
+ *   post:
+ *     summary: Solicitar restablecimiento de contraseña
+ *     description: Envía un correo con un enlace para restablecer la contraseña. El enlace expira en 1 hora.
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "usuario@ejemplo.com"
+ *     responses:
+ *       200:
+ *         description: Correo enviado (respuesta genérica para no revelar si el email existe)
+ *       500:
+ *         description: Error al enviar el correo
+ */
+router.post('/reset-password', validateDto(RequestResetPasswordDto), asyncHandler(controller.requestResetPassword));
 
 export { router };

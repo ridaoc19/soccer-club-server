@@ -7,9 +7,11 @@ import { DeleteUserUseCase } from '../application/delete-user.usecase';
 import { GetUserUseCase, IProfileResponse } from '../application/get-user.usecase';
 import { ILoginResponse, LoginUserUseCase } from '../application/login-user.usecase';
 import { UpdateUserUseCase } from '../application/update-user.usecase';
+import { ResetPasswordUseCase } from '../application/reset-password.usecase';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { RequestResetPasswordDto } from '../dto/request-reset-password.dto';
 
 export class UsersController {
   constructor(
@@ -19,6 +21,7 @@ export class UsersController {
     private updateProfile: UpdateUserUseCase,
     private changePassword: ChangePasswordUseCase,
     private deleteUser: DeleteUserUseCase,
+    private resetPassword: ResetPasswordUseCase,
   ) {}
 
   create = async (req: Request, res: Response): Promise<void> => {
@@ -66,5 +69,11 @@ export class UsersController {
     const body = req.body as { email: string; password: string };
     const { user, message } = await this.loginUser.execute(body.email, body.password);
     AppResponse.ok<ILoginResponse['user']>(res, user, message);
+  };
+
+  requestResetPassword = async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body as RequestResetPasswordDto;
+    await this.resetPassword.execute(email);
+    AppResponse.ok(res, null, 'Si el correo existe, recibirás las instrucciones en breve');
   };
 }
