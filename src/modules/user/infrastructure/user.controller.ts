@@ -28,7 +28,11 @@ export class UsersController {
     const user = await this.createUser.execute(req.body as CreateUserDto);
 
     const { password: _, ...userWithoutPassword } = user;
-    AppResponse.created(res, userWithoutPassword, 'Usuario creado exitosamente');
+    AppResponse.created(
+      res,
+      userWithoutPassword,
+      `${userWithoutPassword.name} el usuario fue creado exitosamente, revisa el correo electrónico ${userWithoutPassword.email}`,
+    );
   };
 
   getAll = async (_req: Request, res: Response): Promise<void> => {

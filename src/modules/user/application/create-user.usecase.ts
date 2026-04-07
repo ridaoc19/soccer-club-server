@@ -1,6 +1,6 @@
 import { AppResponse } from '../../../core/base/http-response';
 import { JwtUtils } from '../../../core/utils/jwt.utils';
-import { mailTemplates, sendMail } from '../../../core/utils/mailer.utils';
+import { mailTemplates } from '../../../core/utils/mailer.utils';
 import { User } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/user.repository';
 
@@ -27,11 +27,11 @@ export class CreateUserUseCase {
       const resetUrl = `${process.env.CLIENT_URL}/auth/change?token=${resetToken}`;
 
       const template = mailTemplates.resetPassword(resetUrl);
-      await sendMail({ to: userCreated.email, ...template });
+      console.log(template);
+      // await sendMail({ to: userCreated.email, ...template });
 
       return userCreated;
     } catch (_error) {
-      // Si falla el envío del correo, eliminamos al usuario para "revertir" la creación
       await this.usersRepo.delete(userCreated.id);
       throw new AppResponse('Error al enviar el correo de activación. El usuario no fue creado.', 500);
     }
