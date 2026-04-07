@@ -20,9 +20,12 @@ export class LeagueController {
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
     const league = await this.leagueRepo.findOneBy({ id: Number(id) });
-    if (!league) return AppResponse.notFound(res, 'Liga no encontrada');
+    if (!league) {
+      AppResponse.notFound('Liga no encontrada');
+      return;
+    }
 
-    this.leagueRepo.merge(league, req.body);
+    // this.leagueRepo.merge(league, req.body);
     await this.leagueRepo.save(league);
     AppResponse.ok(res, league, 'Liga actualizada exitosamente');
   };

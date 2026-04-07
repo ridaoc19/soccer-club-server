@@ -1,22 +1,22 @@
 import { Router } from 'express';
 import { AppDataSource } from '../../../app/data-source';
-import { User } from '../domain/user.entity';
-import { UsersRepository } from './user.repository';
-import { CreateUserUseCase } from '../application/create-user.usecase';
-import { LoginUserUseCase } from '../application/login-user.usecase';
-import { GetUserUseCase } from '../application/get-user.usecase';
-import { UpdateUserUseCase } from '../application/update-user.usecase';
-import { ChangePasswordUseCase } from '../application/change-password.usecase';
-import { DeleteUserUseCase } from '../application/delete-user.usecase';
-import { ResetPasswordUseCase } from '../application/reset-password.usecase';
-import { UsersController } from './user.controller';
-import { validateDto } from '../../../core/middleware/validation.middleware';
-import { LoginDto } from '../dto/login-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { ChangePasswordDto } from '../dto/change-password.dto';
-import { RequestResetPasswordDto } from '../dto/request-reset-password.dto';
 import { asyncHandler } from '../../../core/base/async-handler';
 import { authMiddleware } from '../../../core/middleware/auth.middleware';
+import { validateDto } from '../../../core/middleware/validation.middleware';
+import { ChangePasswordUseCase } from '../application/change-password.usecase';
+import { CreateUserUseCase } from '../application/create-user.usecase';
+import { DeleteUserUseCase } from '../application/delete-user.usecase';
+import { GetUserUseCase } from '../application/get-user.usecase';
+import { LoginUserUseCase } from '../application/login-user.usecase';
+import { ResetPasswordUseCase } from '../application/reset-password.usecase';
+import { UpdateUserUseCase } from '../application/update-user.usecase';
+import { User } from '../domain/user.entity';
+import { CreateUserDto } from '../dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { LoginDto } from '../dto/login-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { UsersController } from './user.controller';
+import { UsersRepository } from './user.repository';
 
 const router = Router();
 
@@ -29,7 +29,15 @@ const changePassword = new ChangePasswordUseCase(repo);
 const deleteUser = new DeleteUserUseCase(repo);
 const resetPassword = new ResetPasswordUseCase(repo);
 
-const controller = new UsersController(createUser, loginUser, getUser, updateProfile, changePassword, deleteUser, resetPassword);
+const controller = new UsersController(
+  createUser,
+  loginUser,
+  getUser,
+  updateProfile,
+  changePassword,
+  deleteUser,
+  resetPassword,
+);
 
 /**
  * @swagger
@@ -203,7 +211,7 @@ const controller = new UsersController(createUser, loginUser, getUser, updatePro
  *             schema:
  *               $ref: '#/components/schemas/ApiErrorResponse'
  */
-router.post('/', asyncHandler(controller.create));
+router.post('/register', validateDto(CreateUserDto), asyncHandler(controller.create));
 
 /**
  * @swagger
@@ -424,6 +432,11 @@ router.get('/', authMiddleware, asyncHandler(controller.getAll));
  *       500:
  *         description: Error al enviar el correo
  */
-router.post('/reset-password', validateDto(RequestResetPasswordDto), asyncHandler(controller.requestResetPassword));
+router.post(
+  '/reset-password',
+  authMiddleware,
+  //   validateDto(RequestResetPasswordDto),
+  asyncHandler(controller.requestResetPassword),
+);
 
 export { router };

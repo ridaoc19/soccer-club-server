@@ -36,7 +36,10 @@ router.post(
   '/',
   uploadLocal.single('file'),
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    if (!req.file) return AppResponse.error(res, 'No se ha subido ningún archivo', 400);
+    if (!req.file) {
+      AppResponse.badRequest('No se ha subido ningún archivo');
+      return;
+    }
 
     const mediaRepo = AppDataSource.getRepository(Media);
     const media = mediaRepo.create({
@@ -59,7 +62,10 @@ router.post(
   '/url',
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { url, originalName } = req.body as { url: string; originalName?: string };
-    if (!url) return AppResponse.error(res, 'La URL es requerida', 400);
+    if (!url) {
+      AppResponse.badRequest('La URL es requerida');
+      return;
+    }
 
     const mediaRepo = AppDataSource.getRepository(Media);
     const media = mediaRepo.create({
@@ -96,7 +102,10 @@ router.patch(
 
     const mediaRepo = AppDataSource.getRepository(Media);
     const media = await mediaRepo.findOneBy({ id: Number(id) });
-    if (!media) return AppResponse.error(res, 'Imagen no encontrada', 404);
+    if (!media) {
+      AppResponse.notFound('Imagen no encontrada');
+      return;
+    }
 
     media.inUse = true;
     media.usedBy = usedBy ?? media.usedBy;
@@ -112,7 +121,10 @@ router.patch(
     const { id } = req.params;
     const mediaRepo = AppDataSource.getRepository(Media);
     const media = await mediaRepo.findOneBy({ id: Number(id) });
-    if (!media) return AppResponse.error(res, 'Imagen no encontrada', 404);
+    if (!media) {
+      AppResponse.notFound('Imagen no encontrada');
+      return;
+    }
 
     media.inUse = false;
     media.usedBy = '';
@@ -128,10 +140,14 @@ router.delete(
     const { id } = req.params;
     const mediaRepo = AppDataSource.getRepository(Media);
     const media = await mediaRepo.findOneBy({ id: Number(id) });
-    if (!media) return AppResponse.error(res, 'Imagen no encontrada', 404);
+    if (!media) {
+      AppResponse.notFound('Imagen no encontrada');
+      return;
+    }
 
     if (media.inUse) {
-      return AppResponse.error(res, 'No se puede eliminar una imagen que está en uso', 400);
+      AppResponse.badRequest('No se puede eliminar una imagen que está en uso');
+      return;
     }
 
     // Eliminar archivo físico si es local

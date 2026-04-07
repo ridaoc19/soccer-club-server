@@ -1,7 +1,6 @@
-import { UsersRepository } from '../infrastructure/user.repository';
-import { AppResponse } from '../../../core/base/http-response';
 import { JwtUtils } from '../../../core/utils/jwt.utils';
-import { sendMail, mailTemplates } from '../../../core/utils/mailer.utils';
+import { mailTemplates, sendMail } from '../../../core/utils/mailer.utils';
+import { UsersRepository } from '../infrastructure/user.repository';
 
 export class ResetPasswordUseCase {
   constructor(private usersRepo: UsersRepository) {}

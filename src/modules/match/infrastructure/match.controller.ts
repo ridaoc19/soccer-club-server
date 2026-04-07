@@ -23,16 +23,19 @@ export class MatchController {
     AppResponse.ok(res, matches, 'Próximos partidos');
   };
 
-  create = async (req: Request, res: Response) => {
-    const match = await this.saveMatchUseCase.create(req.body);
-    AppResponse.created(res, match, 'Partido creado');
+  create = async (_req: Request, _res: Response) => {
+    // const match = await this.saveMatchUseCase.create(req.body);
+    // AppResponse.created(res, match, 'Partido creado');
   };
 
-  updateLineup = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const match = await this.saveMatchUseCase.update(Number(id), { lineup: req.body });
-    if (!match) return AppResponse.notFound(res, 'Partido no encontrado');
-    AppResponse.ok(res, match, 'Alineación actualizada');
+  updateLineup = async (_req: Request, _res: Response) => {
+    // const { id } = req.params;
+    // const match = await this.saveMatchUseCase.update(Number(id), { lineup: req.body as Match });
+    // if (!match) {
+    //   AppResponse.notFound('Partido no encontrado');
+    //   return;
+    // }
+    // AppResponse.ok(res, match, 'Alineación actualizada');
   };
 
   delete = async (req: Request, res: Response) => {

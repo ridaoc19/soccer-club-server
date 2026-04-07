@@ -72,6 +72,7 @@ export class UsersController {
   };
 
   requestResetPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log(req);
     const { email } = req.body as RequestResetPasswordDto;
     await this.resetPassword.execute(email);
     AppResponse.ok(res, null, 'Si el correo existe, recibirás las instrucciones en breve');

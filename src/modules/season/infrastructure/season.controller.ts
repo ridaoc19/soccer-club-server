@@ -20,9 +20,12 @@ export class SeasonController {
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
     const season = await this.seasonRepo.findOneBy({ id: Number(id) });
-    if (!season) return AppResponse.notFound(res, 'Temporada no encontrada');
+    if (!season) {
+      AppResponse.notFound('Temporada no encontrada');
+      return;
+    }
 
-    this.seasonRepo.merge(season, req.body);
+    // this.seasonRepo.merge(season, req.body);
     await this.seasonRepo.save(season);
     AppResponse.ok(res, season, 'Temporada actualizada exitosamente');
   };

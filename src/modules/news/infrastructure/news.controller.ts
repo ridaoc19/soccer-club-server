@@ -31,9 +31,12 @@ export class NewsController {
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
     const news = await this.newsRepo.findOneBy({ id: Number(id) });
-    if (!news) return AppResponse.notFound(res, 'Noticia no encontrada');
+    if (!news) {
+      AppResponse.notFound('Noticia no encontrada');
+      return;
+    }
 
-    this.newsRepo.merge(news, req.body);
+    // this.newsRepo.merge(news, req.body);
     await this.newsRepo.save(news);
     AppResponse.ok(res, news, 'Noticia actualizada');
   };

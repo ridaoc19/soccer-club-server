@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ quiet: true });
 
 // import dotenv from 'dotenv'
 import { z } from 'zod';

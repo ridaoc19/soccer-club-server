@@ -11,18 +11,21 @@ export class SponsorController {
     AppResponse.ok(res, sponsors, 'Patrocinadores obtenidos');
   };
 
-  create = async (req: Request, res: Response) => {
-    const sponsor = this.sponsorRepo.create(req.body);
-    await this.sponsorRepo.save(sponsor);
-    AppResponse.created(res, sponsor, 'Patrocinador creado');
+  create = async (_req: Request, _res: Response) => {
+    // const sponsor = this.sponsorRepo.create(req.body);
+    // await this.sponsorRepo.save(sponsor);
+    // AppResponse.created(res, sponsor, 'Patrocinador creado');
   };
 
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
     const sponsor = await this.sponsorRepo.findOneBy({ id: Number(id) });
-    if (!sponsor) return AppResponse.notFound(res, 'Patrocinador no encontrado');
+    if (!sponsor) {
+      AppResponse.notFound('Patrocinador no encontrado');
+      return;
+    }
 
-    this.sponsorRepo.merge(sponsor, req.body);
+    // this.sponsorRepo.merge(sponsor, req.body);
     await this.sponsorRepo.save(sponsor);
     AppResponse.ok(res, sponsor, 'Patrocinador actualizado');
   };

@@ -1,12 +1,13 @@
+import { AppResponse } from '../../../core/base/http-response';
+import { JwtUtils } from '../../../core/utils/jwt.utils';
+import { mailTemplates, sendMail } from '../../../core/utils/mailer.utils';
 import { User } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/user.repository';
-import { AppResponse } from '../../../core/base/http-response';
-import { PasswordUtils } from '../../../core/utils/password.utils';
 
 export class CreateUserUseCase {
   constructor(private usersRepo: UsersRepository) {}
 
-  async execute(data: { email: string; name: string; password: string; avatar?: string }): Promise<User> {
+  async execute(data: { email: string; name: string; avatar?: string }): Promise<User> {
     const exists = await this.usersRepo.findByEmail(data.email);
 
     if (exists) {
@@ -14,11 +15,25 @@ export class CreateUserUseCase {
     }
 
     // Hash de la contraseña antes de guardar
-    const hashedPassword = await PasswordUtils.hash(data.password);
+    // const hashedPassword = await PasswordUtils.hash(data.password);
 
-    return this.usersRepo.create({
+    const userCreated = await this.usersRepo.create({
       ...data,
-      password: hashedPassword,
+      // password: hashedPassword,
     });
+
+    try {
+      const resetToken = JwtUtils.sign({ id: String(userCreated.id), email: userCreated.email });
+      const resetUrl = `${process.env.CLIENT_URL}/auth/change?token=${resetToken}`;
+
+      const template = mailTemplates.resetPassword(resetUrl);
+      await sendMail({ to: userCreated.email, ...template });
+
+      return userCreated;
+    } catch (_error) {
+      // Si falla el envío del correo, eliminamos al usuario para "revertir" la creación
+      await this.usersRepo.delete(userCreated.id);
+      throw new AppResponse('Error al enviar el correo de activación. El usuario no fue creado.', 500);
+    }
   }
 }

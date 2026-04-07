@@ -43,10 +43,16 @@ export class GetStandingUseCase {
         const s = standings[t.name];
         s.played += 1;
         s.goalsFor += t.score;
-        const oppScore = t.isHome ? (t.name === 'NUESTRO CLUB' ? m.awayScore : m.homeScore) : (t.name === 'NUESTRO CLUB' ? m.homeScore : m.awayScore);
+        // const oppScore = t.isHome ? (t.name === 'NUESTRO CLUB' ? m.awayScore : m.homeScore) : (t.name === 'NUESTRO CLUB' ? m.homeScore : m.awayScore);
         // Better logic:
         const tScore = t.score;
-        const oScore = t.isHome ? (t.name === 'NUESTRO CLUB' ? m.awayScore : m.homeScore) : (t.name === 'NUESTRO CLUB' ? m.homeScore : m.awayScore);
+        const oScore = t.isHome
+          ? t.name === 'NUESTRO CLUB'
+            ? m.awayScore
+            : m.homeScore
+          : t.name === 'NUESTRO CLUB'
+            ? m.homeScore
+            : m.awayScore;
 
         s.goalsAgainst += oScore;
         s.goalDifference = s.goalsFor - s.goalsAgainst;

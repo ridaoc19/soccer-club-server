@@ -22,12 +22,15 @@ export class TeamController {
     AppResponse.created(res, team, 'Equipo creado exitosamente');
   };
 
-  update = async (req: Request, res: Response) => {
+  update = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const team = await this.teamRepo.findOneBy({ id: Number(id) });
-    if (!team) return AppResponse.notFound(res, 'Equipo no encontrado');
+    if (!team) {
+      AppResponse.notFound('Equipo no encontrado');
+      return;
+    }
 
-    this.teamRepo.merge(team, req.body);
+    // this.teamRepo.merge(team, req.body);
     await this.teamRepo.save(team);
     AppResponse.ok(res, team, 'Equipo actualizado exitosamente');
   };

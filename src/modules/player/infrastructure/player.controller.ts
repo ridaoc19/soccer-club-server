@@ -20,9 +20,12 @@ export class PlayerController {
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
     const player = await this.playerRepo.findOneBy({ id: Number(id) });
-    if (!player) return AppResponse.notFound(res, 'Jugador no encontrado');
+    if (!player) {
+      AppResponse.notFound('Jugador no encontrado');
+      return;
+    }
 
-    this.playerRepo.merge(player, req.body);
+    // this.playerRepo.merge(player, req.body);
     await this.playerRepo.save(player);
     AppResponse.ok(res, player, 'Jugador actualizado');
   };
