@@ -1,20 +1,36 @@
 import jwt from 'jsonwebtoken';
 
 const SECRET = process.env['JWT_SECRET'] ?? 'default_secret_key';
-const EXPIRES_IN = process.env['JWT_EXPIRES_IN'] ?? '7d';
+
+export type TokenType = 'auth' | 'password_reset' | 'create_user';
 
 export interface ITokenPayload {
   id: string;
   email: string;
+  type: TokenType;
 }
 
+const TOKEN_EXPIRATION: Record<TokenType, string> = {
+  auth: '7d',
+  create_user: '30m',
+  password_reset: '1h',
+};
+
 export class JwtUtils {
-  static sign(payload: ITokenPayload): string {
-    return jwt.sign(payload, SECRET as jwt.Secret, {
-      expiresIn: EXPIRES_IN as jwt.SignOptions['expiresIn'],
+  /**
+   * Genera un token basado en el tipo especificado
+   */
+  static sign(type: TokenType, payload: Omit<ITokenPayload, 'type'>): string {
+    const expiresIn = TOKEN_EXPIRATION[type];
+
+    return jwt.sign({ ...payload, type }, SECRET as jwt.Secret, {
+      expiresIn: expiresIn as jwt.SignOptions['expiresIn'],
     });
   }
 
+  /**
+   * Verifica el token y retorna el payload tipado
+   */
   static verify(token: string): ITokenPayload {
     return jwt.verify(token, SECRET) as ITokenPayload;
   }

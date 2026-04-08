@@ -9,16 +9,28 @@ export interface IProfileResponse {
 export class GetUserUseCase {
   constructor(private usersRepo: UsersRepository) {}
 
-  async execute(id: number): Promise<IProfileResponse> {
-    const user = await this.usersRepo.findById(id);
+  async execute(id: number, token: string): Promise<IProfileResponse> {
+    let user = await this.usersRepo.findById(id);
 
-    if (!user) {
-      throw AppResponse.notFound('Usuario no encontrado');
+    if (!user) throw AppResponse.notFound('Usuario no encontrado');
+
+    // Usuario recien creados
+    if (user.password && token === user.verification_token)
+      throw AppResponse.badRequest('Este toquen ya fue utilizado, solicita un nuevo restablecimiento de contraseña');
+    if (!user.password) {
+      if ((user.verified_email, user.verification_token))
+        throw AppResponse.badRequest('Cambia tu contraseña para ingresar a la web');
+      user = await this.usersRepo.update(id, { verified_email: true, verification_token: token });
     }
 
-    const { password: _pass, ...userWithoutPassword } = user;
+    if (!user) throw AppResponse.notFound('Usuario no encontrado');
+
+    const { password, ...userWithoutPassword } = user;
+
     return {
-      message: 'Perfil obtenido',
+      message: !password
+        ? `${user.name} acabas de validar tu correo, solo falta cambiar tu contreseña`
+        : 'Perfil obtenido',
       user: userWithoutPassword,
     };
   }

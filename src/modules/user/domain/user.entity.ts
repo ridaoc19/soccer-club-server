@@ -16,6 +16,12 @@ export class User {
   @Column()
   name!: string;
 
+  @Column({ default: false })
+  verified_email!: boolean;
+
+  @Column({ nullable: true })
+  verification_token!: string;
+
   @Column({ nullable: true })
   avatar!: string;
 

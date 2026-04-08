@@ -215,6 +215,55 @@ router.post('/register', validateDto(CreateUserDto), asyncHandler(controller.cre
 
 /**
  * @swagger
+ * /user/profile:
+ *   get:
+ *     summary: Obtener el perfil del usuario autenticado
+ *     description: Retorna la información completa del usuario que ha iniciado sesión.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/ApiResponse'
+ *                 - type: object
+ *                   properties:
+ *                     success:
+ *                       example: true
+ *                     data:
+ *                       $ref: '#/components/schemas/UserResponse'
+ *       401:
+ *         description: No autorizado
+ */
+router.get('/profile', authMiddleware, asyncHandler(controller.getProfile));
+
+/**
+ * @swagger
+ * /user/change-password:
+ *   put:
+ *     summary: Cambiar la contraseña
+ *     description: Permite al usuario autenticado cambiar su contraseña actual por una nueva.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ChangePasswordDto'
+ *     responses:
+ *       200:
+ *         description: Contraseña cambiada exitosamente
+ */
+router.put('/change-password', authMiddleware, validateDto(ChangePasswordDto), asyncHandler(controller.updatePassword));
+
+/**
+ * @swagger
  * /user/login:
  *   post:
  *     summary: Iniciar sesión
@@ -271,34 +320,6 @@ router.post('/login', validateDto(LoginDto), asyncHandler(controller.login));
 
 /**
  * @swagger
- * /user/profile:
- *   get:
- *     summary: Obtener el perfil del usuario autenticado
- *     description: Retorna la información completa del usuario que ha iniciado sesión.
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Perfil obtenido exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/ApiResponse'
- *                 - type: object
- *                   properties:
- *                     success:
- *                       example: true
- *                     data:
- *                       $ref: '#/components/schemas/UserResponse'
- *       401:
- *         description: No autorizado
- */
-router.get('/profile', authMiddleware, asyncHandler(controller.getProfile));
-
-/**
- * @swagger
  * /user/update:
  *   put:
  *     summary: Actualizar el perfil del usuario
@@ -332,27 +353,6 @@ router.get('/profile', authMiddleware, asyncHandler(controller.getProfile));
  *         description: El correo ya está en uso
  */
 router.put('/update', authMiddleware, validateDto(UpdateUserDto), asyncHandler(controller.update));
-
-/**
- * @swagger
- * /user/change-password:
- *   put:
- *     summary: Cambiar la contraseña
- *     description: Permite al usuario autenticado cambiar su contraseña actual por una nueva.
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/ChangePasswordDto'
- *     responses:
- *       200:
- *         description: Contraseña cambiada exitosamente
- */
-router.put('/change-password', authMiddleware, validateDto(ChangePasswordDto), asyncHandler(controller.updatePassword));
 
 /**
  * @swagger

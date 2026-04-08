@@ -44,7 +44,8 @@ export class UsersController {
 
   getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
     const userId = Number(req.user?.id ?? 0);
-    const { user, message } = await this.getUser.execute(userId);
+    const token = req.token ?? '';
+    const { user, message } = await this.getUser.execute(userId, token);
 
     AppResponse.ok<IProfileResponse['user']>(res, user, message);
   };

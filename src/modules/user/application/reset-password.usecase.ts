@@ -11,7 +11,7 @@ export class ResetPasswordUseCase {
     // No revelamos si el email existe o no (seguridad)
     if (!user) return;
 
-    const resetToken = JwtUtils.sign({ id: String(user.id), email: user.email });
+    const resetToken = JwtUtils.sign('password_reset', { id: String(user.id), email: user.email });
     const resetUrl = `${process.env.CLIENT_URL}/auth/change?token=${resetToken}`;
 
     const template = mailTemplates.resetPassword(resetUrl);

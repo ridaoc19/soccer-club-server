@@ -27,10 +27,7 @@ export class LoginUserUseCase {
     }
 
     // Generar token JWT real
-    const token = JwtUtils.sign({
-      id: String(user.id),
-      email: user.email,
-    });
+    const token = JwtUtils.sign('auth', { id: String(user.id), email: user.email });
 
     // Omitir la contraseña de la respuesta
     const { password: _pass, ...userWithoutPassword } = user;

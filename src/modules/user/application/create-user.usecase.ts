@@ -23,7 +23,7 @@ export class CreateUserUseCase {
     });
 
     try {
-      const resetToken = JwtUtils.sign({ id: String(userCreated.id), email: userCreated.email });
+      const resetToken = JwtUtils.sign('create_user', { id: String(userCreated.id), email: userCreated.email });
       const resetUrl = `${process.env.CLIENT_URL}/auth/change?token=${resetToken}`;
 
       const template = mailTemplates.resetPassword(resetUrl);

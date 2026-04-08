@@ -7,6 +7,7 @@ export interface AuthRequest extends Request {
     id: string;
     email: string;
   };
+  token?: string;
 }
 
 export const authMiddleware = (req: AuthRequest, _res: Response, next: NextFunction): void => {
@@ -21,6 +22,7 @@ export const authMiddleware = (req: AuthRequest, _res: Response, next: NextFunct
   try {
     const payload = JwtUtils.verify(token || '');
     req.user = payload;
+    req.token = token;
     next();
   } catch {
     throw AppResponse.unauthorized('Token inválido o expirado');
