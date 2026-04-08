@@ -16,20 +16,17 @@ export class LoginUserUseCase {
     const user = await this.usersRepo.findByEmail(email);
 
     if (!user) {
-      throw new AppResponse('El usuario no existe', 404);
+      throw new AppResponse('Usuario o contraseña incorrecta', 404);
     }
 
-    // Comparar contraseñas
     const isPasswordValid = await PasswordUtils.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw AppResponse.unauthorized('Contraseña incorrecta');
+      throw AppResponse.unauthorized('Usuario o contraseña incorrecta');
     }
 
-    // Generar token JWT real
     const token = JwtUtils.sign('login', { id: String(user.id), email: user.email });
 
-    // Omitir la contraseña de la respuesta
     const { password: _pass, ...userWithoutPassword } = user;
 
     return {
