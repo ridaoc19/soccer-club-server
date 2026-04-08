@@ -1,12 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { JwtUtils } from '../utils/jwt.utils';
+import { ITokenPayload, JwtUtils } from '../utils/jwt.utils';
 import { AppResponse } from '../base/http-response';
 
 export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-  };
+  user?: ITokenPayload;
   token?: string;
 }
 

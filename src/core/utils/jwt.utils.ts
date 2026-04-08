@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const SECRET = process.env['JWT_SECRET'] ?? 'default_secret_key';
 
-export type TokenType = 'auth' | 'password_reset' | 'create_user';
+export type TokenType = 'login' | 'password_reset' | 'create_user';
 
 export interface ITokenPayload {
   id: string;
@@ -11,7 +11,7 @@ export interface ITokenPayload {
 }
 
 const TOKEN_EXPIRATION: Record<TokenType, string> = {
-  auth: '7d',
+  login: '7d',
   create_user: '30m',
   password_reset: '1h',
 };

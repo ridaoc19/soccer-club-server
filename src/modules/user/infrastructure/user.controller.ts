@@ -45,7 +45,8 @@ export class UsersController {
   getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
     const userId = Number(req.user?.id ?? 0);
     const token = req.token ?? '';
-    const { user, message } = await this.getUser.execute(userId, token);
+    const type = req.user?.type ?? null;
+    const { user, message } = await this.getUser.execute(userId, token, type);
 
     AppResponse.ok<IProfileResponse['user']>(res, user, message);
   };
@@ -77,9 +78,8 @@ export class UsersController {
   };
 
   requestResetPassword = async (req: Request, res: Response): Promise<void> => {
-    console.log(req);
     const { email } = req.body as RequestResetPasswordDto;
     await this.resetPassword.execute(email);
-    AppResponse.ok(res, null, 'Si el correo existe, recibirás las instrucciones en breve');
+    AppResponse.ok(res, [], 'Si el correo existe, recibirás las instrucciones en breve');
   };
 }
