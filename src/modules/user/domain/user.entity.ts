@@ -1,6 +1,11 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Notification } from './notification.entity';
-import { Role } from './role.entity';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+  GUEST = 'guest',
+}
 
 @Entity()
 export class User {
@@ -16,6 +21,9 @@ export class User {
   @Column()
   name!: string;
 
+  @Column()
+  phone!: string;
+
   @Column({ default: false })
   verified_email!: boolean;
 
@@ -28,7 +36,27 @@ export class User {
   @OneToMany(() => Notification, (n) => n.user)
   notifications!: Notification[];
 
-  @ManyToMany(() => Role)
-  @JoinTable()
-  roles!: Role[];
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.GUEST,
+  })
+  role!: UserRole;
+
+  // Se llena automáticamente al insertar el registro
+  @CreateDateColumn({
+    name: 'created_at', // Optional: keeps database columns snake_case
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt!: Date;
+
+  // Se actualiza automáticamente cada vez que haces un .save()
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updatedAt!: Date;
 }

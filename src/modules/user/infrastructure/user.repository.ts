@@ -6,13 +6,13 @@ export class UsersRepository {
   constructor(private repo: Repository<User>) {}
 
   findAll(): Promise<User[]> {
-    return this.repo.find({ relations: ['roles'] });
+    return this.repo.find();
   }
 
   findById(id: number): Promise<User | null> {
     return this.repo.findOne({
       where: { id },
-      relations: ['roles', 'notifications'],
+      relations: ['notifications'],
     });
   }
 
