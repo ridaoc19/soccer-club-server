@@ -12,27 +12,41 @@ export class SeasonController {
   };
 
   create = async (req: Request, res: Response) => {
-    const season = this.seasonRepo.create(req.body as Partial<Season>);
-    await this.seasonRepo.save(season);
-    AppResponse.created(res, season, 'Temporada creada exitosamente');
+    try {
+      const season = this.seasonRepo.create(req.body as Partial<Season>);
+      await this.seasonRepo.save(season);
+      AppResponse.created(res, season, 'Temporada creada exitosamente');
+    } catch (error) {
+      throw AppResponse.internal('Error al crear la temporada');
+    }
   };
 
   update = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const season = await this.seasonRepo.findOneBy({ id: Number(id) });
-    if (!season) {
-      AppResponse.notFound('Temporada no encontrada');
-      return;
-    }
+    try {
+      const { id } = req.params;
+      const season = await this.seasonRepo.findOneBy({ id: Number(id) });
+      if (!season) throw AppResponse.notFound('Temporada no encontrada');
 
-    // this.seasonRepo.merge(season, req.body);
-    await this.seasonRepo.save(season);
-    AppResponse.ok(res, season, 'Temporada actualizada exitosamente');
+      this.seasonRepo.merge(season, req.body);
+      await this.seasonRepo.save(season);
+      AppResponse.ok(res, season, 'Temporada actualizada exitosamente');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al actualizar la temporada');
+    }
   };
 
   delete = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    await this.seasonRepo.delete(id);
-    AppResponse.ok(res, null, 'Temporada eliminada exitosamente');
+    try {
+      const { id } = req.params;
+      const season = await this.seasonRepo.findOneBy({ id: Number(id) });
+      if (!season) throw AppResponse.notFound('Temporada no encontrada');
+
+      await this.seasonRepo.remove(season);
+      AppResponse.ok(res, null, 'Temporada eliminada exitosamente');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al eliminar la temporada');
+    }
   };
 }

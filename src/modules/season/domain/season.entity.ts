@@ -15,6 +15,12 @@ export class Season {
   @Column({ type: 'date', nullable: true })
   endDate!: Date;
 
+  @Column({ nullable: true })
+  year!: string;
+
+  @Column({ default: 'active' })
+  status!: 'active' | 'upcoming' | 'finished';
+
   @Column({ default: true })
   isActive!: boolean;
 

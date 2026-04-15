@@ -9,7 +9,13 @@ export class League {
   @Column()
   name!: string;
 
-  @Column({ nullable: true })
+  @Column()
+  country!: string;
+
+  @Column()
+  category!: string;
+
+  @Column()
   logo!: string;
 
   @OneToMany(() => Season, (s: Season) => s.league)

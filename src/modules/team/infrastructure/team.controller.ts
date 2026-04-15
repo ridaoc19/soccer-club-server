@@ -17,27 +17,41 @@ export class TeamController {
   };
 
   create = async (req: Request, res: Response) => {
-    const team = this.teamRepo.create(req.body as Partial<Team>);
-    await this.teamRepo.save(team);
-    AppResponse.created(res, team, 'Equipo creado exitosamente');
+    try {
+      const team = this.teamRepo.create(req.body as Partial<Team>);
+      await this.teamRepo.save(team);
+      AppResponse.created(res, team, 'Equipo creado exitosamente');
+    } catch (error) {
+      throw AppResponse.internal('Error al crear el equipo');
+    }
   };
 
   update = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const team = await this.teamRepo.findOneBy({ id: Number(id) });
-    if (!team) {
-      AppResponse.notFound('Equipo no encontrado');
-      return;
-    }
+    try {
+      const { id } = req.params;
+      const team = await this.teamRepo.findOneBy({ id: Number(id) });
+      if (!team) throw AppResponse.notFound('Equipo no encontrado');
 
-    // this.teamRepo.merge(team, req.body);
-    await this.teamRepo.save(team);
-    AppResponse.ok(res, team, 'Equipo actualizado exitosamente');
+      this.teamRepo.merge(team, req.body);
+      await this.teamRepo.save(team);
+      AppResponse.ok(res, team, 'Equipo actualizado exitosamente');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al actualizar el equipo');
+    }
   };
 
   delete = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    await this.teamRepo.delete(id);
-    AppResponse.ok(res, null, 'Equipo eliminado exitosamente');
+    try {
+      const { id } = req.params;
+      const team = await this.teamRepo.findOneBy({ id: Number(id) });
+      if (!team) throw AppResponse.notFound('Equipo no encontrado');
+
+      await this.teamRepo.remove(team);
+      AppResponse.ok(res, null, 'Equipo eliminado exitosamente');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al eliminar el equipo');
+    }
   };
 }

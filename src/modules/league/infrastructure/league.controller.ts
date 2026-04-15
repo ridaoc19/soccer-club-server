@@ -12,27 +12,41 @@ export class LeagueController {
   };
 
   create = async (req: Request, res: Response) => {
-    const league = this.leagueRepo.create(req.body as Partial<League>);
-    await this.leagueRepo.save(league);
-    AppResponse.created(res, league, 'Liga creada exitosamente');
+    try {
+      const league = this.leagueRepo.create(req.body as Partial<League>);
+      await this.leagueRepo.save(league);
+      AppResponse.created(res, league, 'Liga creada exitosamente');
+    } catch (error) {
+      throw AppResponse.internal('Error al crear la liga');
+    }
   };
 
   update = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const league = await this.leagueRepo.findOneBy({ id: Number(id) });
-    if (!league) {
-      AppResponse.notFound('Liga no encontrada');
-      return;
-    }
+    try {
+      const { id } = req.params;
+      const league = await this.leagueRepo.findOneBy({ id: Number(id) });
+      if (!league) throw AppResponse.notFound('Liga no encontrada');
 
-    // this.leagueRepo.merge(league, req.body);
-    await this.leagueRepo.save(league);
-    AppResponse.ok(res, league, 'Liga actualizada exitosamente');
+      this.leagueRepo.merge(league, req.body);
+      await this.leagueRepo.save(league);
+      AppResponse.ok(res, league, 'Liga actualizada exitosamente');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al actualizar la liga');
+    }
   };
 
   delete = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    await this.leagueRepo.delete(id);
-    AppResponse.ok(res, null, 'Liga eliminada exitosamente');
+    try {
+      const { id } = req.params;
+      const league = await this.leagueRepo.findOneBy({ id: Number(id) });
+      if (!league) throw AppResponse.notFound('Liga no encontrada');
+
+      await this.leagueRepo.remove(league);
+      AppResponse.ok(res, null, 'Liga eliminada exitosamente');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al eliminar la liga');
+    }
   };
 }

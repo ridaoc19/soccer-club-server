@@ -19,31 +19,45 @@ export class NewsController {
   };
 
   create = async (req: AuthRequest, res: Response) => {
-    const news = this.newsRepo.create({
-      ...req.body,
-      author: { id: Number(req.user?.id ?? 0) },
-    } as Partial<News>);
+    try {
+      const news = this.newsRepo.create({
+        ...req.body,
+        author: { id: Number(req.user?.id ?? 0) },
+      } as Partial<News>);
 
-    await this.newsRepo.save(news);
-    AppResponse.created(res, news, 'Noticia publicada con éxito');
+      await this.newsRepo.save(news);
+      AppResponse.created(res, news, 'Noticia publicada con éxito');
+    } catch (error) {
+      throw AppResponse.internal('Error al publicar la noticia');
+    }
   };
 
   update = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const news = await this.newsRepo.findOneBy({ id: Number(id) });
-    if (!news) {
-      AppResponse.notFound('Noticia no encontrada');
-      return;
-    }
+    try {
+      const { id } = req.params;
+      const news = await this.newsRepo.findOneBy({ id: Number(id) });
+      if (!news) throw AppResponse.notFound('Noticia no encontrada');
 
-    // this.newsRepo.merge(news, req.body);
-    await this.newsRepo.save(news);
-    AppResponse.ok(res, news, 'Noticia actualizada');
+      this.newsRepo.merge(news, req.body);
+      await this.newsRepo.save(news);
+      AppResponse.ok(res, news, 'Noticia actualizada');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al actualizar la noticia');
+    }
   };
 
   delete = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    await this.newsRepo.delete(id);
-    AppResponse.ok(res, null, 'Noticia eliminada');
+    try {
+      const { id } = req.params;
+      const news = await this.newsRepo.findOneBy({ id: Number(id) });
+      if (!news) throw AppResponse.notFound('Noticia no encontrada');
+
+      await this.newsRepo.remove(news);
+      AppResponse.ok(res, null, 'Noticia eliminada');
+    } catch (error) {
+      if (error instanceof AppResponse) throw error;
+      throw AppResponse.internal('Error al eliminar la noticia');
+    }
   };
 }

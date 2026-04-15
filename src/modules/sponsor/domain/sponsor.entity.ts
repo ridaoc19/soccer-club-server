@@ -14,6 +14,15 @@ export class Sponsor {
   @Column({ nullable: true })
   website!: string;
 
+  @Column({ nullable: true })
+  category!: string;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  contractValue!: number;
+
+  @Column({ default: 'active' })
+  status!: 'active' | 'expired';
+
   @Column({ default: 'partner' })
   type!: 'main' | 'sub' | 'partner';
 

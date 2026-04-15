@@ -17,6 +17,15 @@ export class Team {
 
   @Column({ nullable: true })
   category!: string;
+  
+  @Column({ nullable: true })
+  city!: string;
+
+  @Column({ nullable: true })
+  manager!: string;
+
+  @Column({ default: 0 })
+  points!: number;
 
   @OneToMany(() => Player, (p) => p.team)
   players!: Player[];
